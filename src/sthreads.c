@@ -405,6 +405,13 @@ NOEXPORT void null_handler(int sig) {
     signal(SIGCHLD, null_handler);
 }
 
+int drop_privileges(int critical);
+
+void maybe_drop_privs(void) {
+    if (!getuid() && service_options.uid)
+        drop_privileges(0);
+}
+
 int create_client(SOCKET ls, SOCKET s, CLI *arg, void *(*cli)(void *)) {
     switch(fork()) {
     case -1:    /* error */
@@ -413,6 +420,7 @@ int create_client(SOCKET ls, SOCKET s, CLI *arg, void *(*cli)(void *)) {
             closesocket(s);
         return -1;
     case  0:    /* child */
+        maybe_drop_privs();
         if(ls>=0)
             closesocket(ls);
         signal(SIGCHLD, null_handler);

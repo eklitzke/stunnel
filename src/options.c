@@ -2494,6 +2494,35 @@ NOEXPORT char *parse_service_option(CMD cmd, SERVICE_OPTIONS *section,
     }
 #endif
 
+#ifndef USE_WIN32
+    /* setuid */
+    switch(cmd) {
+    case CMD_BEGIN:
+        section->defer_drop=0;
+        break;
+    case CMD_EXEC:
+        if(strcasecmp(opt, "defer_drop"))
+            break;
+        if(!strcasecmp(arg, "yes")) {
+            section->defer_drop=1;
+        } else if(!strcasecmp(arg, "no")) {
+            section->defer_drop=0;
+        } else
+            return "The argument needs to be either 'yes', 'no'";
+        return NULL; /* OK */
+    case CMD_END:
+        break;
+    case CMD_FREE:
+        break;
+    case CMD_DEFAULT:
+        break;
+    case CMD_HELP:
+        s_log(LOG_NOTICE, "%-22s = yes|no defer privilege drop",
+              "defer_drop");
+        break;
+    }
+#endif
+
     /* sessionCacheSize */
     switch(cmd) {
     case CMD_BEGIN:

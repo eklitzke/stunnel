@@ -180,6 +180,8 @@ int drop_privileges(int critical) {
 #ifdef HAVE_SETGROUPS
     gid_t gr_list[1];
 #endif
+    if(service_options.defer_drop && critical)
+        return 0;
 
     /* set uid and gid */
     if(service_options.gid) {

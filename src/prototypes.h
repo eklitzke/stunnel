@@ -183,6 +183,7 @@ typedef struct service_options_struct {
 
         /* service-specific data for stunnel.c */
 #ifndef USE_WIN32
+    int defer_drop;
     uid_t uid;
     gid_t gid;
 #endif
